@@ -4,7 +4,6 @@ const inquirer = require('../libs/inquirer');
 const path = require('path');
 const fs = require('fs-extra');
 const ora = require('ora'); // 终端显示loading
-const logSymbols = require('log-symbols'); // 命令行输出符号
 const chalk = require('chalk'); // 命令行输出字符颜色
 const figlet = require('figlet');
 const exec = require('promise-exec');
