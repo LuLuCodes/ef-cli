@@ -1,7 +1,7 @@
 # ef-cli
 
 easy-front 前端工程脚手架
-目前集成了 easy-front-cli3 v2.0.0 版本
+目前集成了 easy-front-cli3 v2.0.0 和 easy-front-express-api v1.0.0
 
 ## 安装
 
