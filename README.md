@@ -6,7 +6,7 @@ easy-front 前端工程脚手架
 ## 安装
 
 ```shell
-cnpm install -g ef-cli
+cnpm install -g easy-front-cli
 ```
 
 ## 使用
