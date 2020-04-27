@@ -9,7 +9,7 @@ module.exports = {
         type: 'list',
         message: '选择模板:',
         name: 'projectType',
-        choices: ['Web', 'API'],
+        choices: ['Web', 'API', 'Web+API'],
       },
       {
         name: 'projectName',
