@@ -2,7 +2,7 @@
 
 基于 vue cli3 的项目工程模板 2.0
 
-## 2.0 改进点
+## 2.0.x 改进点
 
 - vue 全套升级至最新版本
 - axios 从之前的 vuex 中独立，并挂载到 VUE 原型上
@@ -14,6 +14,9 @@
 - 路由守卫构建成单独的 js，方便管理
 - 优化打包过程(代码拆分)
 - 移除 PWA(目前 pwa 技术点没有摸透，没法构建合适生产的解决方案，暂时先移除，后面将拉单独的分支来完善)
+- 新增骨架屏
+- 异步组件，加载状态管理
+- 支持 JSX
 
 v1.0 的文档请看[这里](https://github.com/LuLuCodes/easy-front-vue-cli3/blob/master/README-1.md)
 
@@ -115,8 +118,8 @@ router/index.js 是一个路由动态加载器，可以按以下两种方式创�
 export default [
   {
     path: '/home',
-    component: () => import(/* webpackChunkName: "home" */ '@/views/home.vue')
-  }
+    component: () => import(/* webpackChunkName: "home" */ '@/views/home.vue'),
+  },
 ];
 ```
 
@@ -131,13 +134,13 @@ export default [
     component: () =>
       import(
         /* webpackChunkName: "good-list" */ '@/views/good/good-list/index.vue'
-      )
+      ),
   },
   {
     path: '/good/good-detail',
     component: () =>
-      import(/* webpackChunkName: "good-detail" */ '@/views/good/good-detail')
-  }
+      import(/* webpackChunkName: "good-detail" */ '@/views/good/good-detail'),
+  },
 ];
 ```
 
@@ -225,12 +228,12 @@ export default new Router({
       return savedPosition;
     }
     // 异步滚动操作
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       setTimeout(() => {
         resolve({ x: 0, y: 1 });
       }, 0);
     });
-  }
+  },
 });
 ```
 
@@ -245,9 +248,9 @@ export default [
     component: () => import('@/views/home'),
     meta: {
       deepth: 1,
-      keepAlive: true // 需要被缓存
-    }
-  }
+      keepAlive: true, // 需要被缓存
+    },
+  },
 ];
 ```
 
@@ -323,17 +326,17 @@ components: {
 ```js
 // in src/api/request.js
 service.interceptors.request.use(
-  config => {
+  (config) => {
     config.retry = 2; // 重试次数
     config.retryDelay = 500; // 重试延时
-    config.shouldRetry = error => {
+    config.shouldRetry = (error) => {
       // 只有在断网或者超时重试，其他的(4xx,5xx)不重试
       // 如果开启重试机制，timeout建议不要设置过长
       return !error.response;
     }; // 重试条件，默认只要是错误都需要重试
     return config;
   },
-  error => {
+  (error) => {
     return Promise.reject(error);
   }
 );
@@ -356,13 +359,13 @@ if (
       // 重试次数自增
       config.__retryCount += 1;
       // 延时处理
-      const backoff = new Promise(function(resolve) {
-        setTimeout(function() {
+      const backoff = new Promise(function (resolve) {
+        setTimeout(function () {
           resolve();
         }, config.retryDelay || 1);
       });
       // 重新发起axios请求
-      return backoff.then(function() {
+      return backoff.then(function () {
         return service(config);
       });
     }
@@ -374,7 +377,28 @@ if (
 
 是否使用 cdn，看具体场景，如果项目中用到大部分的组件，可以使用 cdn 引入！
 如果只是部分组件，特别是没有使用的 vant 业务组件时，可以按需引用！
+如果需要使用 vant 的 cdn，请在 main.js 中删除关于 plugins 的引入，并放开 vue.config.js 关于 vant cdn 的注释
 
 ## 发布小火箭
 
 发布小火箭页面在 www 目录下，在正式项目中使用时，请根据实际需求修改
+
+## 骨架屏
+
+为了优化体验，特别是在网络差的情况下的用户感官，这里新增了骨架屏的使用示例
+
+```shell
+# 安装全局插件
+cnpm i draw-page-structure -g
+```
+
+```shell
+# 生成骨架屏页面
+dps start
+```
+
+### 配置
+
+修改 dps.config.js，主要是修改骨架屏生成的 url、输出目录 output。
+默认配置下，生成的骨架屏没有动画，后期需要开发自己加入 css 动画。
+当前配置下，骨架屏生成在 skeleton 目录下，生成后需要跟 public/index.html 做结合才能使用。

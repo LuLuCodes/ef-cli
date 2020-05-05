@@ -106,7 +106,7 @@ module.exports = {
       var externals = {
         vue: 'Vue',
         axios: 'axios',
-        'vue-router': 'VueRouter',
+        'vue-router': 'Router',
         vuex: 'Vuex'
         // vant: 'Vant'
       };
@@ -163,7 +163,7 @@ module.exports = {
           },
           vantUI: {
             name: 'chunk-vant', // 单独将 vantUI 拆包
-            priority: 20, // 数字大权重到，满足多个 cacheGroups 的条件时候分到权重高的
+            priority: 20, // 数字大权重高，满足多个 cacheGroups 的条件时候分到权重高的
             test: /[\\/]node_modules[\\/]_?vant(.*)/
           }
         }
