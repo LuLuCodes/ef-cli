@@ -1,63 +1,56 @@
 # easy-front-vue-cli3
 
-本文档只描述脚手架新增特性，实际项目中使用的注意点请查阅文档[How to use](https://github.com/LuLuCodes/easy-front-vue-cli3/blob/master/HowToUse.md)
-
-基于 vue cli3 的项目工程模板 2.0
-
-## 2.0.x 改进点
-
-- vue 全套升级至最新版本
-- axios 从之前的 vuex 中独立，并挂载到 VUE 原型上
-- axios 增加重试机制
-- 精简 mixins，将全局方法挂载到 VUE 原型上
-- 增加全局过滤器
-- 修改输出目录，将 dist 目录迁移到 www/dist 下，同时增加 publish.html，配合 [www.conf](https://github.com/joneqian/centos_install_shell/blob/master/www.conf)，实现发布时自动挂载小火箭
-- 增加异步组件懒加载示例
-- 路由守卫构建成单独的 js，方便管理
-- 优化打包过程(代码拆分)
-- 移除 PWA(目前 pwa 技术点没有摸透，没法构建合适生产的解决方案，暂时先移除，后面将拉单独的分支来完善)
-- 新增骨架屏
-- 异步路由组件，加载状态管理
-- 支持 JSX
-
-v1.0 的文档请看[这里](https://github.com/LuLuCodes/easy-front-vue-cli3/blob/master/README-1.md)
+基于 vue cli3 的项目工程模板
 
 ## 使用方法
+
+### clone 项目到本地
+
+```
+https://github.com/LuLuCodes/easy-front-vue-cli3.git
+
+```
+
+### 删除.git 和修改项目名称
+
+```shell
+rm -rf .git
+```
 
 ### 安装依赖
 
 ```shell
-npm install
+yarn install
 ```
 
 ### 调试模式
 
 ```shell
-npm run dev
+yarn run dev
 ```
 
 ### 打包生产环境
 
 ```shell
-npm run build
+yarn run build
 ```
 
 ### 打包测试环境
 
 ```shell
-npm run test
+yarn run test
 ```
 
 ### 打包预发布环境
 
 ```shell
-npm run pre-release
+yarn run pre-release
 ```
 
 ### 检查语法和修复文件
 
 ```shell
-npm run lint
+yarn run lint
 ```
 
 ### 修改不同构建目标配置
@@ -70,8 +63,6 @@ npm run lint
 ```
 
 ### 以 cdn 方式引用第三方资源（以 vant 为例），修改 vue.config.js
-
-**注意：在具体项目中，请使用正式环境的 oss，cdn.myun.info 只是临时域名，随时会变更**
 
 ```js
 var externals = {
@@ -104,8 +95,8 @@ const cdn = {
 ### 新建页面或组件
 
 ```shell
-npm run new:view // 新建页面，支持单个vue文件如home.vue，或者目录如home/index.vue
-npm run new:comp // 新建组件，支持单个vue文件如my-button.vue，或者目录如my-button/index.vue
+yarn run new:view // 新建页面，支持单个vue文件如home.vue，或者目录如home/index.vue
+yarn run new:comp // 新建组件，支持单个vue文件如my-button.vue，或者目录如my-button/index.vue
 ```
 
 ### 动态加载路由
@@ -256,6 +247,30 @@ export default [
 ];
 ```
 
+### 数据通讯签名机制
+
+前端请求数据时，对 post 请求中数据进行 MD5 签名并对签名进行 RSA 加密
+
+#### 是否启用数据签名
+
+在.env\*环境配置文件中，增加`VUE_APP_ENABLE_SIGN = "1"`
+
+#### 设置公钥
+
+1、公钥如何产生，请查看[easy-front-express-api](https://github.com/LuLuCodes/easy-front-express-api)
+
+2、请在 src/store/index.js 中设置公钥
+
+```
+// 设置公钥
+const pem = `-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCoVF1Z6CSMKdNPtdkuNQWCIYiZ
+ZTvjEuEOAEPo0z2rz6A/m6byE8B84V69f+xtNg9s1QtZ0jLW3Lvumps1GmLSXwCX
+rJOcKm+3jmB3+KecXTguJMJHEkxvLYUKk270ennfSq7uQZ9P9iIEDgHHaQMJd/I5
+M6E1RulpjXQt5cpzUQIDAQAB
+-----END PUBLIC KEY-----`;
+```
+
 ## git commit
 
 ### 全局安装 commitizen
@@ -294,130 +309,85 @@ npm run commit
 ? List any ISSUES CLOSED by this change (optional). E.g.: #31, #34:
 ```
 
-## 公共方法
+## PWA
+
+### 配置 service-work.js
+
+请在 src/service-work.js 中进行以下配置：
+
+1、设置缓存前缀和后缀
 
 ```js
-// in main.js
-// 将常用方法和过滤器直接挂在在Vue上，mixins上编写功能模块的通用方法，减少mixins的体积
-import common from '@/utils/common'; // 全局方法
-import filters from '@/utils/filters'; // 全局过滤器
-
-// 注册全局过滤器
-for (const key in filters) {
-  Vue.filter(key, filters[key]);
-}
-
-Vue.use(common); // 注册全局方法
+// 设置缓存前缀和后缀，请根据实际项目名修改
+workbox.core.setCacheNameDetails({
+  prefix: 'easy-front-vue-cli3',
+  suffix: 'v1.0.0'
+});
 ```
 
-## 异步组件懒加载
+2、设置 api url
 
 ```js
-components: {
-  // 组件推荐使用异步懒加载方式
-  /** 警告：
-  * 并非所有组件都推荐使用异步懒加载，异步懒加载的组件代码并不会直接和主组件的代码一起被加载，而是在需要时才请求.
-  * 这意味着在增加了http的请求，在网络差的情况下可能出现渲染延迟的情况.
-  */
-  'home-goods-item': () => import('../../components/home-goods-item')
-}
-```
-
-## 异步路由组件，加载状态管理
-
-```js
-import { lazyLoadView } from '@/utils';
-export default [
-  {
-    path: '/home',
-    name: 'home',
-    component: () => lazyLoadView(import('@/views/home')),
-    meta: {
-      deepth: 1,
-      keepAlive: true // 需要被缓存
-    }
-  }
-];
-```
-
-## axios 请求重试机制
-
-```js
-// in src/api/request.js
-service.interceptors.request.use(
-  config => {
-    config.retry = 2; // 重试次数
-    config.retryDelay = 500; // 重试延时
-    config.shouldRetry = error => {
-      // 只有在断网或者超时重试，其他的(4xx,5xx)不重试
-      // 如果开启重试机制，timeout建议不要设置过长
-      return !error.response;
-    }; // 重试条件，默认只要是错误都需要重试
-    return config;
-  },
-  error => {
-    return Promise.reject(error);
-  }
+// api缓存，优选从网络获取，网络异常时再使用缓存，请根据实际api url配置RegExp
+workbox.routing.registerRoute(
+  new RegExp('https://m.hellomrbigbigshot.xyz/api'),
+  workbox.strategies.networkFirst({
+    cacheName: 'api'
+  })
 );
 ```
 
+3、在 manifest.json 中配置应用名称和图标，用于浏览器将应用添加至桌面
+
+### 禁用 PWA
+
+本项目默认开启 PWA，如不使用 PWA， 请进行以下操作：
+
+1、删除 src 下的文件 registerServiceWorker.js 和 service-worker.js
+
+2、在 src/main.js 中删除以下代码：
+
 ```js
-// in src/api/request.js service.interceptors.response.use
-if (
-  config &&
-  config.retry &&
-  config.shouldRetry &&
-  typeof config.shouldRetry === 'function'
-) {
-  // 判断是否满足重试条件
-  if (config.shouldRetry(error)) {
-    // 设置重置次数，默认为0
-    config.__retryCount = config.__retryCount || 0;
-    // 判断是否超过了重试次数
-    if (config.__retryCount < config.retry) {
-      // 重试次数自增
-      config.__retryCount += 1;
-      // 延时处理
-      const backoff = new Promise(function(resolve) {
-        setTimeout(function() {
-          resolve();
-        }, config.retryDelay || 1);
-      });
-      // 重新发起axios请求
-      return backoff.then(function() {
-        return service(config);
-      });
+import './registerServiceWorker';
+```
+
+3、在 vue.config.js 中删除以下部分：
+
+```js
+pwa: {
+    name: 'easy-front-vue-cli3',
+    themeColor: '#4DBA87',
+    msTileColor: '#000000',
+    appleMobileWebAppCapable: 'yes',
+    appleMobileWebAppStatusBarStyle: 'black',
+    // configure the workbox plugin (GenerateSW or InjectManifest)
+    workboxPluginMode: 'InjectManifest',
+    workboxOptions: {
+      // swSrc is required in InjectManifest mode.
+      swSrc: 'src/service-worker.js',
+      importWorkboxFrom: 'disabled',
+      importScripts: 'https://cdn.myun.info/workbox-v4.3.1/workbox-sw.js'
+      // ...other Workbox options...
     }
   }
-}
 ```
 
-## 为什么 vant 没有用 cdn？
+4、删除 public/manifest.json 文件
 
-是否使用 cdn，看具体场景，如果项目中用到大部分的组件，可以使用 cdn 引入！
-如果只是部分组件，特别是没有使用的 vant 业务组件时，可以按需引用！
-如果需要使用 vant 的 cdn，请在 main.js 中删除关于 plugins 的引入，并放开 vue.config.js 关于 vant cdn 的注释
+5、删除 package.json 中的`devDependencies`里的`@vue/cli-plugin-pwa`依赖，并重新`npm install`
 
-## 发布小火箭
+### 在已经上线的项目中，关闭 Service Work
 
-发布小火箭页面在 www 目录下，在正式项目中使用时，请根据实际需求修改
+有些项目上线后，又不想使用 Service Work， 请进行以下操作：
 
-## 骨架屏
+1、在 src/main.js 中删除以下代码：
 
-为了优化体验，特别是在网络差的情况下的用户感官，这里新增了骨架屏的使用示例
-
-```shell
-# 安装全局插件
-cnpm i draw-page-structure -g
+```js
+import './registerServiceWorker';
 ```
 
-```shell
-# 生成骨架屏页面
-dps start
+2、在 src/main.js 中加入以下代码：
+
+```js
+import './unregisterServiceWorker';
 ```
-
-### 配置
-
-修改 dps.config.js，主要是修改骨架屏生成的 url、输出目录 output。
-默认配置下，生成的骨架屏没有动画，后期需要开发自己加入 css 动画。
-当前配置下，骨架屏生成在 skeleton 目录下，生成后需要跟 public/index.html 做结合才能使用。

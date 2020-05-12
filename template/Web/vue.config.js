@@ -16,9 +16,9 @@ module.exports = {
   css: {
     extract: IS_PROD, // 是否使用css分离插件 ExtractTextPlugin
     sourceMap: false, // 开启 CSS source maps?
-    loaderOptions: {}, // css预设器配置项
+    loaderOptions: {} // css预设器配置项
   },
-  configureWebpack: (config) => {
+  configureWebpack: config => {
     if (IS_PROD) {
       config.plugins.push(
         new UglifyJsPlugin({
@@ -27,11 +27,11 @@ module.exports = {
             compress: {
               drop_debugger: true, // console
               drop_console: true,
-              pure_funcs: ['console.log'], // 移除console
-            },
+              pure_funcs: ['console.log'] // 移除console
+            }
           },
           sourceMap: false,
-          parallel: true,
+          parallel: true
         })
       );
       // #region 启用GZip压缩
@@ -40,7 +40,7 @@ module.exports = {
           algorithm: 'gzip',
           test: /\.js$|\.html$|\.json$|\.css/,
           threshold: 10240,
-          minRatio: 0.8,
+          minRatio: 0.8
         })
       );
       // #endregion
@@ -53,14 +53,14 @@ module.exports = {
         //生成文件的最大体积
         maxAssetSize: 30000000,
         //只给出 js 文件的性能提示
-        assetFilter: function (assetFilename) {
+        assetFilter: function(assetFilename) {
           return assetFilename.endsWith('.js');
-        },
+        }
       };
       // #endregion
     }
   },
-  chainWebpack: (config) => {
+  chainWebpack: config => {
     // #region 关闭预加载
     config.plugins.delete('prefetch');
     config.plugins.delete('preload');
@@ -97,7 +97,7 @@ module.exports = {
         .use('image-webpack-loader')
         .loader('image-webpack-loader')
         .options({
-          bypassOnDebug: true,
+          bypassOnDebug: true
         })
         .end();
       // #endregion
@@ -107,7 +107,7 @@ module.exports = {
         vue: 'Vue',
         axios: 'axios',
         'vue-router': 'VueRouter',
-        vuex: 'Vuex',
+        vuex: 'Vuex'
         // vant: 'Vant'
       };
       config.externals(externals);
@@ -123,12 +123,12 @@ module.exports = {
           // axios
           '//cdn.myun.info/axios-0.19.2/axios.min.js',
           // localforage
-          '//cdn.myun.info/localforage.min.js',
+          '//cdn.myun.info/localforage.min.js'
           // vant
           // '//cdn.myun.info/vant-2.6.2/vant.min.js'
-        ],
+        ]
       };
-      config.plugin('html').tap((args) => {
+      config.plugin('html').tap(args => {
         args[0].cdn = cdn;
         return args;
       });
@@ -140,8 +140,8 @@ module.exports = {
         .use('script-ext-html-webpack-plugin', [
           {
             // 将 runtime 作为内联引入不单独存在
-            inline: /runtime\..*\.js$/,
-          },
+            inline: /runtime\..*\.js$/
+          }
         ])
         .end();
       config.optimization.splitChunks({
@@ -153,20 +153,20 @@ module.exports = {
             test: resolve('src/components'),
             minChunks: 3, //  被至少用三次以上打包分离
             priority: 5, // 优先级
-            reuseExistingChunk: true, // 表示是否使用已有的 chunk，如果为 true 则表示如果当前的 chunk 包含的模块已经被抽取出去了，那么将不会重新生成新的。
+            reuseExistingChunk: true // 表示是否使用已有的 chunk，如果为 true 则表示如果当前的 chunk 包含的模块已经被抽取出去了，那么将不会重新生成新的。
           },
           node_vendors: {
             name: 'chunk-libs',
             chunks: 'initial', // 只打包初始时依赖的第三方
             test: /[\\/]node_modules[\\/]/,
-            priority: 10,
+            priority: 10
           },
           vantUI: {
             name: 'chunk-vant', // 单独将 vantUI 拆包
             priority: 20, // 数字大权重高，满足多个 cacheGroups 的条件时候分到权重高的
-            test: /[\\/]node_modules[\\/]_?vant(.*)/,
-          },
-        },
+            test: /[\\/]node_modules[\\/]_?vant(.*)/
+          }
+        }
       });
       config.optimization.runtimeChunk('single');
 
@@ -174,8 +174,8 @@ module.exports = {
       if (process.env.IS_ANALYZE) {
         config.plugin('webpack-report').use(BundleAnalyzerPlugin, [
           {
-            analyzerMode: 'static',
-          },
+            analyzerMode: 'static'
+          }
         ]);
       }
       // #endregion 分析打包体积
@@ -185,13 +185,13 @@ module.exports = {
     watchOptions: {
       aggregateTimeout: 5000,
       poll: true,
-      ignored: ['node_modules'],
+      ignored: ['node_modules']
     }, // 如果在docker开发环境下运行，请开启此项
     port: 8080, // 端口号
     // host: 'localhost',
     https: false, // https:{type:Boolean}
-    open: true, // 配置自动启动浏览器
+    open: true // 配置自动启动浏览器
     // proxy: 'http://localhost:4000' // 配置跨域处理,只有一个代理
     // historyApiFallback: true // 如果采用history模式，开发时请开启此项
-  },
+  }
 };
