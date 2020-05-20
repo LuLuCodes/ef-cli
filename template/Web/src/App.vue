@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import { checkDevice } from '@/utils';
 export default {
   name: 'App',
   components: {},
@@ -19,6 +20,12 @@ export default {
     };
   },
   computed: {},
+  created() {
+    const { isWechat } = checkDevice();
+    if (isWechat) {
+      this.initWxJSSDK();
+    }
+  },
   beforeDestroy() {
     this.$store.commit('updateKeepAliveInclude', []);
   },
@@ -37,7 +44,45 @@ export default {
       this.$store.commit('updateKeepAliveInclude', this.include);
     }
   },
-  methods: {}
+  methods: {
+    async initWxJSSDK() {
+      try {
+        const reuslt = await this.$api.post({
+          url: '/wx/jssdk',
+          data: {
+            url: location.href.split('#')[0]
+          }
+        });
+        window.wx.config({
+          debug: false,
+          appId: reuslt.AppId,
+          timestamp: reuslt.Timestamp,
+          nonceStr: reuslt.NonceStr,
+          signature: reuslt.Signature,
+          jsApiList: [
+            'scanQRCode',
+            'getLocation',
+            'chooseImage',
+            'previewImage'
+            // 'showMenuItems',
+            // 'updateTimelineShareData',
+            // 'updateAppMessageShareData',
+            // 'hideOptionMenu',
+            // 'hideMenuItems',
+            // 'hideAllNonBaseMenuItem',
+            // 'uploadImage',
+            // 'downloadImage',
+            // 'chooseWXPay'
+          ]
+        });
+        window.wx.error(function (res) {
+          console.error(res);
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }
 };
 </script>
 

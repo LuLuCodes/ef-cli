@@ -2,7 +2,7 @@ export default {
   set: function(name, val) {
     localStorage.setItem(name, val);
   },
-  get: function(name, isjson = false) {
+  get: function(name, isjson = true) {
     const val = localStorage.getItem(name);
     if (isjson) {
       return JSON.parse(val);
@@ -18,6 +18,7 @@ export default {
     localStorage.clear(name);
   },
   KEYS: {
-    SELECTED_POINT_ID: 'SELECTED_POINT_ID'
+    SELECTED_POINT_ID: 'SELECTED_POINT_ID',
+    AREA_LIST: 'AREA_LIST'
   }
 };
