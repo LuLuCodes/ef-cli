@@ -1,7 +1,7 @@
 export default {
   data() {
     return {
-      pending: new Map()
+      pending: new Map(),
     };
   },
   methods: {
@@ -9,7 +9,7 @@ export default {
       message = '加载中',
       overlay = false,
       forbidClick = true,
-      duration = 0
+      duration = 0,
     } = {}) {
       this.$toast({
         type: 'loading',
@@ -18,7 +18,7 @@ export default {
         forbidClick,
         duration,
         icon: require('../assets/images/common/loading-white-1.png'),
-        className: 'toast-white'
+        className: 'toast-white',
       });
     },
     unload() {
@@ -30,11 +30,10 @@ export default {
       message = '加载中',
       overlay = false,
       forbidClick = true,
-      duration = 0
+      duration = 0,
     } = {}) {
       if (!url && typeof url === 'string') {
-        console.error('need a string url!');
-        return { error: 'need a string url!', result: null };
+        throw new Error('need a string url!');
       }
 
       const prams = [url, JSON.stringify(data)].join('&');
@@ -46,23 +45,20 @@ export default {
             message,
             overlay,
             forbidClick,
-            duration
+            duration,
           });
           const result = await this.$api.post({ url, data });
           this.pending.delete(prams);
           this.unload();
-          return { error: null, result };
+          return result;
         } else {
-          console.error('this url request is wating response!');
-          return {
-            error: 'this url request is wating response!',
-            result: null
-          };
+          console.error(`this '${url}' request is wating response!`);
+          return null;
         }
       } catch (error) {
-        this.errorMsg(error.message);
+        console.error(error.message);
         this.pending.delete(prams);
-        return { error: error.message, result: null };
+        throw new Error(error.message);
       }
     },
     async dispatch({
@@ -71,11 +67,10 @@ export default {
       message = '加载中',
       overlay = false,
       forbidClick = true,
-      duration = 0
+      duration = 0,
     } = {}) {
       if (!method && typeof url === 'string') {
-        console.error('need a string method!');
-        return { error: 'need a string method!', result: null };
+        throw new Error('need a string url!');
       }
 
       const prams = [method, JSON.stringify(data)].join('&');
@@ -87,23 +82,20 @@ export default {
             message,
             overlay,
             forbidClick,
-            duration
+            duration,
           });
           const result = await this.$store.dispatch(method, { data });
           this.pending.delete(prams);
           this.unload();
-          return { error: null, result };
+          return result;
         } else {
-          console.error('this method dispatch is wating response!');
-          return {
-            error: 'this method dispatch is wating response!',
-            result: null
-          };
+          console.error(`this '${method}' dispatch is wating response!`);
+          return null;
         }
       } catch (error) {
-        this.errorMsg(error.message);
+        console.error(error.message);
         this.pending.delete(prams);
-        return { error: error.message, result: null };
+        throw new Error(error.message);
       }
     },
     async get({
@@ -112,11 +104,10 @@ export default {
       message = '加载中',
       overlay = false,
       forbidClick = true,
-      duration = 0
+      duration = 0,
     } = {}) {
       if (!url && typeof url === 'string') {
-        console.error('need a string url!');
-        return { error: 'need a string url!', result: null };
+        throw new Error('need a string url!');
       }
       const prams = [url, JSON.stringify(data)].join('&');
       try {
@@ -127,23 +118,20 @@ export default {
             message,
             overlay,
             forbidClick,
-            duration
+            duration,
           });
           const result = await this.$api.post({ url, data });
           this.pending.delete(prams);
           this.unload();
-          return { error: null, result };
+          return result;
         } else {
-          console.error('this url request is wating response!');
-          return {
-            error: 'this url request is wating response!',
-            result: null
-          };
+          console.error(`this '${url}' request is wating response!`);
+          return null;
         }
       } catch (error) {
-        this.errorMsg(error.message);
+        console.error(error.message);
         this.pending.delete(prams);
-        return { error: error.message, result: null };
+        throw new Error(error.message);
       }
     },
     warnMsg(warn) {
@@ -154,12 +142,15 @@ export default {
           warn,
           overlay: false,
           forbidClick: true,
-          duration: 2500
+          duration: 2500,
         });
       }
     },
     errorMsg(error) {
-      const msg = typeof error === 'string' ? error : error.message || '';
+      const msg =
+        typeof error === 'string'
+          ? error
+          : error.message || '网络异常，请稍后再试';
       if (msg) {
         this.$toast.clear();
         this.$toast({
@@ -167,12 +158,12 @@ export default {
           msg,
           overlay: false,
           forbidClick: true,
-          duration: 2500
+          duration: 2500,
         });
       }
     },
     goBack() {
       this.$router.go(-1);
-    }
-  }
+    },
+  },
 };

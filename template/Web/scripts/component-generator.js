@@ -1,4 +1,3 @@
-// component-generator.js 组件生成器
 const chalk = require('chalk');
 const path = require('path');
 const fs = require('fs');

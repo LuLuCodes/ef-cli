@@ -1,4 +1,3 @@
-// template.js 组件模板文件
 module.exports = {
   vueTemplate: componentName => {
     return `<template>
@@ -24,17 +23,17 @@ export default {
   computed: {},
   created() {
     // api请求尽量放在这里
-    console.log('this is created');
+    // TODO
   },
   mounted() {
     // 对数据的操作尽量放在这里
-    console.log('this is mounted');
+    // TODO
   },
   updated() {
-    console.log('this is updated');
+    // TODO
   },
   beforeDestroy() {
-    console.log('this is beforeDestroy');
+    // TODO
   },
   watch: {},
   methods: {}
@@ -42,7 +41,6 @@ export default {
 </script>
 <style lang="less" scoped>
 .${componentName} {
-
 }
 </style>
 `;
