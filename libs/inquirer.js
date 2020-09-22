@@ -50,7 +50,11 @@ module.exports = {
         default: true,
         name: 'enableDocker',
         when(answer) {
-          return answer.projectType === 'API' && answer.enableCI;
+          return (
+            (answer.projectType === 'API' ||
+              answer.projectType === 'Web+API') &&
+            answer.enableCI
+          );
         },
       },
     ];

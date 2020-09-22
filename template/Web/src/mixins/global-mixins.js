@@ -1,7 +1,7 @@
 export default {
   data() {
     return {
-      pending: new Map(),
+      pending: new Map()
     };
   },
   methods: {
@@ -9,7 +9,7 @@ export default {
       message = '加载中',
       overlay = false,
       forbidClick = true,
-      duration = 0,
+      duration = 0
     } = {}) {
       this.$toast({
         type: 'loading',
@@ -18,7 +18,7 @@ export default {
         forbidClick,
         duration,
         icon: require('../assets/images/common/loading-white-1.png'),
-        className: 'toast-white',
+        className: 'toast-white'
       });
     },
     unload() {
@@ -30,7 +30,7 @@ export default {
       message = '加载中',
       overlay = false,
       forbidClick = true,
-      duration = 0,
+      duration = 0
     } = {}) {
       if (!url && typeof url === 'string') {
         throw new Error('need a string url!');
@@ -45,7 +45,7 @@ export default {
             message,
             overlay,
             forbidClick,
-            duration,
+            duration
           });
           const result = await this.$api.post({ url, data });
           this.pending.delete(prams);
@@ -67,7 +67,7 @@ export default {
       message = '加载中',
       overlay = false,
       forbidClick = true,
-      duration = 0,
+      duration = 0
     } = {}) {
       if (!method && typeof url === 'string') {
         throw new Error('need a string url!');
@@ -82,7 +82,7 @@ export default {
             message,
             overlay,
             forbidClick,
-            duration,
+            duration
           });
           const result = await this.$store.dispatch(method, { data });
           this.pending.delete(prams);
@@ -104,7 +104,7 @@ export default {
       message = '加载中',
       overlay = false,
       forbidClick = true,
-      duration = 0,
+      duration = 0
     } = {}) {
       if (!url && typeof url === 'string') {
         throw new Error('need a string url!');
@@ -118,7 +118,7 @@ export default {
             message,
             overlay,
             forbidClick,
-            duration,
+            duration
           });
           const result = await this.$api.post({ url, data });
           this.pending.delete(prams);
@@ -142,7 +142,7 @@ export default {
           warn,
           overlay: false,
           forbidClick: true,
-          duration: 2500,
+          duration: 2500
         });
       }
     },
@@ -158,12 +158,12 @@ export default {
           msg,
           overlay: false,
           forbidClick: true,
-          duration: 2500,
+          duration: 2500
         });
       }
     },
     goBack() {
       this.$router.go(-1);
-    },
-  },
+    }
+  }
 };

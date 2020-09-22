@@ -39,6 +39,25 @@ async function createTemplate(config) {
       packageJsonPath = path.resolve(distServerPath, 'package.json');
       await handlePackageJson(packageJsonPath, config);
       await handlePackageScript(packageJsonPath);
+      await fs.remove(path.resolve(distClientPath, '.gitlab-ci.yml'));
+      await fs.remove(path.resolve(distServerPath, '.gitlab-ci.yml'));
+      await fs.remove(path.resolve(distServerPath, '.gitlab-ci-docker.yml'));
+      if (config.enableCI) {
+        if (!config.enableDocker) {
+          await fs.copy(
+            path.resolve(__dirname, `../template/.gitlab-ci-web-api.yml`),
+            path.resolve(`${currentPath}/${projectName}/.gitlab-ci.yml`)
+          );
+        } else {
+          await fs.copy(
+            path.resolve(
+              __dirname,
+              `../template/.gitlab-ci-web-api-docker.yml`
+            ),
+            path.resolve(`${currentPath}/${projectName}/.gitlab-ci.yml`)
+          );
+        }
+      }
       spinner.stop();
       ora(chalk.green('目录生成成功！')).succeed();
       if (config.isNpmInstall) {
