@@ -43,12 +43,8 @@ async function createTemplate(config) {
       await fs.remove(path.resolve(distServerPath, '.gitlab-ci.yml'));
       await fs.remove(path.resolve(distServerPath, '.gitlab-ci-docker.yml'));
       await fs.copy(
-        path.resolve(__dirname, `../template/.gitignore_web`),
-        path.resolve(`${distClientPath}/.gitignore`)
-      );
-      await fs.copy(
-        path.resolve(__dirname, `../template/.gitignore_api`),
-        path.resolve(`${distServerPath}/.gitignore`)
+        path.resolve(__dirname, `../template/.gitignore_web_api`),
+        path.resolve(`${currentPath}/${projectName}/.gitignore`)
       );
       if (config.enableCI) {
         if (!config.enableDocker) {
