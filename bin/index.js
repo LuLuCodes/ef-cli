@@ -42,6 +42,14 @@ async function createTemplate(config) {
       await fs.remove(path.resolve(distClientPath, '.gitlab-ci.yml'));
       await fs.remove(path.resolve(distServerPath, '.gitlab-ci.yml'));
       await fs.remove(path.resolve(distServerPath, '.gitlab-ci-docker.yml'));
+      await fs.copy(
+        path.resolve(__dirname, `../template/.gitignore_web`),
+        path.resolve(`${distClientPath}/.gitignore`)
+      );
+      await fs.copy(
+        path.resolve(__dirname, `../template/.gitignore_api`),
+        path.resolve(`${distServerPath}/.gitignore`)
+      );
       if (config.enableCI) {
         if (!config.enableDocker) {
           await fs.copy(
@@ -89,6 +97,10 @@ async function createTemplate(config) {
         if (!config.enableCI) {
           await fs.remove(path.resolve(distPath, '.gitlab-ci.yml'));
         }
+        await fs.copy(
+          path.resolve(__dirname, `../template/.gitignore_web`),
+          path.resolve(`${distPath}/.gitignore`)
+        );
       }
       if (isAPI) {
         if (!config.enableCI) {
@@ -106,6 +118,10 @@ async function createTemplate(config) {
             );
           }
         }
+        await fs.copy(
+          path.resolve(__dirname, `../template/.gitignore_api`),
+          path.resolve(`${distPath}/.gitignore`)
+        );
       }
       if (config.isNpmInstall) {
         const spinnerInstall = ora('安装依赖中...').start();
